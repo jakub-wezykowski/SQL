@@ -60,7 +60,6 @@ from Sales t1
 left join Product t2
 on t1.product_id = t2. product_id;
 
-
 /* 1581. Customer Who Visited but Did Not Make Any Transactions */
 select 
 	v.customer_id
@@ -69,7 +68,38 @@ from visits v
 left join transactions t 
 on v.visit_id = t.visit_id
 where t.transaction_id is null
-group by v.customer_id
-;
+group by v.customer_id;
+
+/* 197. Rising Temperature */
+select t1.id
+from weather t1
+join weather t2
+on t1.recordDate = DATEADD(DAY, 1, t2.recordDate)
+where t1.temperature > t2. temperature;
+
+/* 1661. Average Time of Process per Machine */
+select 
+	machine_id
+	,round(avg(stop_timestamp - start_timestamp),3) as processing_time
+from (
+	select 
+		machine_id 
+		,process_id 
+		,min (case 
+			when activity_type = 'start' then timestamp
+			else null
+		end) as start_timestamp
+		,max (case 
+			when activity_type = 'end' then timestamp
+			else null
+		end) as stop_timestamp
+	from activity
+	group by 
+		machine_id 
+		,process_id
+	) as subquery
+group by machine_id;
+
+
 
 
